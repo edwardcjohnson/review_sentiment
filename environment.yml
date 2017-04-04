@@ -1,4 +1,4 @@
-name: tabula_rasa
+name: review_sentiment
 dependencies:
 - python=3.6
 - anaconda
@@ -6,3 +6,4 @@ dependencies:
 - numpy
 - pandas
 - matplotlib
+- sklearn
