@@ -31,18 +31,18 @@ An application of machine learning methods to predict the star rating correspond
 
 * Best score (AUC): 0.994 
 * Best parameters set:
-        * clf__alpha: 1e-06
-        * clf__n_iter: 10
-        * clf__penalty: 'l2'
-        * tfidf__norm: 'l2'
-        * vect__max_features: None
+	* clf__alpha: 1e-06
+	* clf__n_iter: 10
+	* clf__penalty: 'l2'
+	* tfidf__norm: 'l2'
+	* vect__max_features: None
 
 * XGBoost:
 * Fitting 3 folds for each of 10 candidates, totalling 30 fits
   * [Parallel(n_jobs=5)]: Done  30 out of  30 | elapsed: 727.0min finished
     * done in 60602.505s 
 
-* Best score: 0.979
+* Best score (AUC): 0.979
 * Best parameters set:
 	* clf__colsample_bytree: 0.93882416583162387
 	* clf__gamma: 5.2248856032270332
