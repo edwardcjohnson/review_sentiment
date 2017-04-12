@@ -3,13 +3,13 @@ An application of machine learning methods to predict the star rating correspond
 
 
 ## Results
-#### Multi-label
+### Multi-label
 | Truncated SVD?  | SGD           | XGBoost |
 | :---------------|:--------------|:---------|
 | yes             | TBD           | TBD     |
 | no              | 0.609         | TBD     |
 
-
+#### CV
 * Fitting 3 folds for each of 96 candidates, totalling 288 fits
   * [Parallel(n_jobs=20)]: Done 288 out of 288 | elapsed: 433.7min finished
     * done in 27297.536s 
@@ -21,8 +21,33 @@ An application of machine learning methods to predict the star rating correspond
 	* vect__max_df: 1.0
 	* vect__max_features: 50000
 	* vect__ngram_range: (1, 2)
+	
+#### Test set
+accuracy = 0.6757
 
-#### Binary label
+ confusion matrix
+ 
+|          | True 1     | True 2     | True 3 | True 4  | True 5 |
+| :--------|:-----------|:-----------|:--------|:-------|:-------|
+| Pred 1   | 98898      | 3356       |   2808  | 1147   | 2372   |
+| Pred 2   | 30192      | 14268      |18716    | 5920   | 2730   |
+| Pred 3   | 7830       | 7128       | 39343   | 39461  | 9492   |
+| Pred 4   | 2253       | 2060       | 11179   | 103563 | 87068  |
+| Pred 5   | 2253       | 567        | 1572    | 31701  | 305195 |
+
+
+ classification report
+ 
+|          | precision  | recall   | f1-score| support|
+|:---------|:-----------|:---------|:--------|:-------| 
+| 1        | 0.70       | 0.91     | 0.79    | 108581 |
+| 2        | 0.52       | 0.20     | 0.29    | 71826  |
+| 3        | 0.53       | 0.38     | 0.44    | 103254 |
+| 4        | 0.57       | 0.50     | 0.53    | 206123 |
+| 5        | 0.75       | 0.90     | 0.82    | 340846 |
+|avg/total | 0.65       | 0.68     | 0.65    | 830630 |
+
+### Binary label
 * SVD:
 * Fitting 3 folds for each of 48 candidates, totalling 144 fits
   * [Parallel(n_jobs=10)]: Done  30 tasks      | elapsed: 55.6min
