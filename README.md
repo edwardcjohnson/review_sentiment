@@ -23,6 +23,7 @@ An application of machine learning methods to predict the star rating correspond
 	* vect__ngram_range: (1, 2)
 	
 #### Test set
+#### SVD
 accuracy = 0.6757
 
  confusion matrix
