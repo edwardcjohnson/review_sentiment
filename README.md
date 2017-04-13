@@ -23,7 +23,7 @@ An application of machine learning methods to predict the star rating correspond
 	* vect__ngram_range: (1, 2)
 	
 #### Test set
-#### SVD
+#### SGD
 accuracy = 0.6757
 
  confusion matrix
@@ -49,7 +49,7 @@ accuracy = 0.6757
 |avg/total | 0.65       | 0.68     | 0.65    | 830630 |
 
 ### Binary label
-* SVD:
+* SGD:
 * Fitting 3 folds for each of 48 candidates, totalling 144 fits
   * [Parallel(n_jobs=10)]: Done  30 tasks      | elapsed: 55.6min
   * [Parallel(n_jobs=10)]: Done 144 out of 144 | elapsed: 223.8min finished
@@ -62,6 +62,8 @@ accuracy = 0.6757
 	* clf__penalty: 'l2'
 	* tfidf__norm: 'l2'
 	* vect__max_features: None
+
+
 
 * XGBoost:
 * Fitting 3 folds for each of 10 candidates, totalling 30 fits
@@ -78,4 +80,19 @@ accuracy = 0.6757
 	* clf__n_estimators: 981
 	* clf__reg_alpha: 6.1698510973535718
 	* clf__subsample: 0.90673496002706067*
+
+#### Test Set
+#### SGD
+* accuracy
+* 0.97265377353171323
+* confusion_matrix
+* array([[168309,  11536],
+       [  8349, 538963]])
+* classification_report
+             precision    recall  f1-score   support
+
+          0       0.95      0.94      0.94    179845
+          1       0.98      0.98      0.98    547312
+
+avg / total       0.97      0.97      0.97    727157
 
