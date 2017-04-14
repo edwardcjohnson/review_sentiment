@@ -83,8 +83,10 @@ accuracy = 0.6757
 
 #### Test Set
 #### SGD
+* AUC
+  * 0.96
 * accuracy
-* 0.97265377353171323
+  * 0.9726
 * confusion_matrix
 * array([[168309,  11536],
        [  8349, 538963]])
