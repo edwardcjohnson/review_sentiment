@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import sys
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score
 from collections import Counter, defaultdict
 from gensim.models import Doc2Vec, Phrases
 from gensim.models.doc2vec import LabeledSentence
@@ -9,34 +10,38 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
-
+import numpy as np
 
 from time import time
 
 
-pickle_file_train = '/nas/isg_prodops_work/ejon9/repos/plb/review_sentiment/data/raw/yelp_review_train.pickle'
-pickle_file_test = '/nas/isg_prodops_work/ejon9/repos/plb/review_sentiment/data/raw/yelp_review_test.pickle'
+pickle_file_train = '/nas/isg_prodops_work/ejon9/repos/plb/review_sentiment/data/processed/yelp_review_train_binary_response.pickle'
+pickle_file_test = '/nas/isg_prodops_work/ejon9/repos/plb/review_sentiment/data/processed/yelp_review_test_binary_response.pickle'
 
 df_train = pd.read_pickle(pickle_file_train)
 df_test = pd.read_pickle(pickle_file_test)
 
 y = 'stars'
+y_binary = 'y_binary'
+X_raw = 'text'
 X = 'clean_text'
-label_id = 'business_id'
+label_id = 'review_id'
 
 
-df_train[X] = df_train[raw_X].apply(clean_text)
+def label_docs(df, text_col, label_col):
+    labeled_docs = []
+    for index, row in df.iterrows():
+        labeled_docs.append(LabeledSentence(row[text_col].split(), [row[label_col]]))
+    return labeled_docs
 
 
-LabeledSentence("hello world".split(), ['123'])
+# df_train = df_train[0:10000] # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# df_test = df_test[0:10000] # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-
-
-labeled_docs = []
-for index, row in df_train.iterrows():
-	labeled_docs.append(LabeledSentence(row[X].split(), [row[label_id]]))
-
+labeled_docs_train = []
+labeled_docs_train = label_docs(df_train, X, label_id)
+labeled_docs_test = []
+labeled_docs_test = label_docs(df_test, X, label_id)
 
 # from random import shuffle
 # shuffle(labeled_docs)
@@ -44,14 +49,18 @@ for index, row in df_train.iterrows():
 # ----------------------------------
 # Train the model
 # ----------------------------------
-model = Doc2Vec(dm=1, dbow_words=1, min_count=4, negative=5,
-                hs=0, sample=1e-4, window=10, size=500, workers=15)
 
-model.build_vocab(labeled_docs)
+size = 500
+model = Doc2Vec(dm=1, dbow_words=1, min_count=4, negative=5,
+                hs=0, sample=1e-4, window=10, size=size, workers=15)
+
+model.build_vocab(labeled_docs_train)
 
 # from gensim.models.word2vec import Word2Vec
 # model.load_word2vec_format('/home/edward/work/projects/finance/data/GoogleNews-vectors-negative300.bin', binary=True)
-model.train(labeled_docs)
+model.train(labeled_docs_train)
+
+
 
 
 # model.save('model.doc2vec')
@@ -68,6 +77,36 @@ print(model.most_similar(positive=['taco']))
 # Binary Classification
 #
 # --------------------------
+
+def getVecs(model, corpus, size):
+    vecs = [np.array(model.docvecs[z.tags[0]]).reshape((1, size)) for z in corpus]
+    return np.concatenate(vecs)
+
+train_vecs = getVecs(model, labeled_docs_train, size)
+
+from sklearn.linear_model import SGDClassifier
+
+lr = SGDClassifier(loss='log', penalty='l2')
+lr.fit(train_vecs, df_train[y_binary])
+
+prediction = lr.predict(train_vecs)
+roc_auc_score(df_train[y_binary], prediction)
+
+
+# Train on test set
+model = Doc2Vec(dm=1, dbow_words=1, min_count=4, negative=5,
+                hs=0, sample=1e-4, window=8, size=500, workers=15)
+model.build_vocab(labeled_docs_test)
+model.train(labeled_docs_test)
+
+test_vecs = getVecs(model, labeled_docs_test, size)
+
+prediction = lr.predict(test_vecs)
+accuracy_score(df_test[y_binary], prediction)
+roc_auc_score(df_test[y_binary], prediction)
+
+
+#######################################
 w2v = dict(zip(model.index2word, model.syn0))
 
 df_w2v = pd.DataFrame(w2v)
@@ -138,9 +177,11 @@ scores = sorted([(name, cross_val_score(model, X, y, cv=5).mean())
                 key=lambda (_, x): -x)
 
 
+
+
 # Train final model
 t0 = time()
-pipeline.fit(df_train[X], df_train[y_binary])
+pipeline.fit(train_vecs, df_train[y_binary])
 print("Done in %0.3fs \n" % (time() - t0))
 
 # Return predictions from final model
