@@ -98,3 +98,21 @@ accuracy = 0.6757
 
 avg / total       0.97      0.97      0.97    727157
 
+
+### Doc2Vec
+#### SGD logistic Reg (Untuned)
+* SGDClassifier(alpha=0.0001, average=False, class_weight=None, epsilon=0.1,
+       eta0=0.0, fit_intercept=True, l1_ratio=0.15,
+       learning_rate='optimal', loss='log', n_iter=5, n_jobs=1,
+       penalty='l2', power_t=0.5, random_state=None, shuffle=True,
+       verbose=0, warm_start=False)
+
+* AUC: 0.73
+#### XGBoost (Untuned)
+* XGBClassifier(base_score=0.5, colsample_bylevel=1, colsample_bytree=1,
+       gamma=0, learning_rate=0.001, max_delta_step=0, max_depth=10,
+       min_child_weight=1, missing=None, n_estimators=500, nthread=-1,
+       objective='binary:logistic', reg_alpha=0, reg_lambda=1,
+       scale_pos_weight=1, seed=0, silent=True, subsample=1)
+
+* AUC: 0.60
